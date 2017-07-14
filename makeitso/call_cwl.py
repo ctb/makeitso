@@ -13,4 +13,5 @@ def save_params(params_str):
 
 
 def call_cwl(task, params):
-    subprocess.call(['/home/tx160085/env/bin/python', path_to_cwltool, task, params])
+    print('*** here I run: {} {} {}'.format(path_to_cwltool, task, params))
+    #subprocess.call(['/home/tx160085/env/bin/python', path_to_cwltool, task, params])
