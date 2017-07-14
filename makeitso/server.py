@@ -20,6 +20,8 @@ def unauthorized():
 
 app = Flask('makeitso')
 
+next_task_id = 0
+
 tasks = [
 ]
 
@@ -70,17 +72,19 @@ def not_found(error):
 
 @app.route('/todo/api/v1.0/tasks', methods=['POST'])
 def create_task():
+    global next_task_id
     if not request.json or not 'taskname' in request.json \
              or not 'params' in request.json:
         abort(400)
 
     task = {
-        'id': tasks[-1]['id'] + 1,
+        'id': next_task_id,
         'taskname': request.json.get('taskname', ""),
         'params': request.json.get('params', ""),
         'done': False,
         'taken': False,
     }
+    next_task_id += 1
     tasks.append(task)
     return jsonify({'task': task}), 201
 
