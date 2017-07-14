@@ -116,7 +116,8 @@ def worker(args):
                 print('no more tasks and --quit set; exiting')
             else:
                 sleep_n += 1
-                print('\rno more tasks; sleeping for a bit. {}'.format(sleep_n), end='', flush=True)
+                print('\rno more tasks; sleeping for a bit. {}'.format(sleep_n), end='')
+                sys.stdout.flush()
                 try:
                     time.sleep(args.sleep_time)
                 except KeyboardInterrupt:
