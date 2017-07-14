@@ -5,7 +5,7 @@ from . import config
 
 
 def save_params(params_str):
-    fp = tempfile.NamedTemporaryFile(mode='w', suffix='.makeitso'
+    fp = tempfile.NamedTemporaryFile(mode='w', suffix='.makeitso',
                                      delete=False)
     fp.write(params_str)
     fp.close()
