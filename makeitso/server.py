@@ -26,6 +26,7 @@ tasks = [
         'taskname': u'ctb/dockstore-tool-bamstats',
         'params': u'',
         'done': False,
+        'taken': False,
     },
 ]
 
@@ -44,6 +45,21 @@ def make_public_task(task):
 @auth.login_required
 def get_tasks():
     return jsonify({'tasks': [make_public_task(task) for task in tasks]})
+
+
+@app.route('/todo/api/v1.0/take_task', methods=['POST'])
+def take_task():
+    firsttask = None
+    for task in tasks:
+        if not task['taken']:
+            firsttask = task
+            task['taken'] = True
+            break
+
+    if firsttask:
+        return jsonify({'task': make_public_task(firsttask)})
+    else:
+        return jsonify({'task': {}})
 
 
 @app.route('/todo/api/v1.0/tasks/<int:task_id>', methods=['GET'])
@@ -69,7 +85,8 @@ def create_task():
         'id': tasks[-1]['id'] + 1,
         'taskname': request.json.get('taskname', ""),
         'params': request.json.get('params', ""),
-        'done': False
+        'done': False,
+        'taken': False,
     }
     tasks.append(task)
     return jsonify({'task': task}), 201

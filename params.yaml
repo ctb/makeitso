@@ -1,0 +1,4 @@
+bam_input:
+    class: File
+    path: rna.SRR948778.bam
+mem_gb: 4

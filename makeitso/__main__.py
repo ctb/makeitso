@@ -4,17 +4,19 @@ import sys
 import requests
 from requests.auth import HTTPDigestAuth
 import json
+import time
 
 from .logging import notify, set_quiet
 from .find_cwldef import find_cwldef
-from .call_cwl import call_cwl
+from .call_cwl import call_cwl, save_params
 from .server import app
 
 
 def main():
     set_quiet(False)
 
-    commands = {'run': run, 'server': server, 'sendtask': sendtask}
+    commands = {'run': run, 'server': server, 'sendtask': sendtask,
+                'worker': worker}
     parser = argparse.ArgumentParser(
         description='do things with CWL',
         usage='''makeitso <command> [<args>]
@@ -82,6 +84,49 @@ def sendtask(args):
     response = requests.post(full_url, json=taskdict, auth=auth)
 
     response.raise_for_status()
+
+
+def worker(args):
+    p = argparse.ArgumentParser()
+    p.add_argument('-S', '--server-url', default='http://localhost:5000')
+    p.add_argument('--quit', action='store_true')
+    p.add_argument('--sleep-time', default=1)
+    args = p.parse_args(args)
+
+    full_url = args.server_url + '/todo/api/v1.0/take_task'
+
+    sleep_n = 0
+    while 1:
+        # authenticate & POST
+        auth = HTTPDigestAuth('miguel', 'python')
+        response = requests.post(full_url, auth=auth)
+
+        response.raise_for_status()
+
+        result = response.json()
+        task = result['task']
+        if not task:
+            if args.quit:
+                print('no more tasks and --quit set; exiting')
+            else:
+                sleep_n += 1
+                print('\rno more tasks; sleeping for a bit. {}'.format(sleep_n), end='')
+                time.sleep(args.sleep_time)
+                continue
+
+        print(task['uri'], task['taskname'])
+        print('resolving task "{}"'.format(task['taskname']))
+        full_task = find_cwldef(task['taskname'])
+        print('...resolved to {}'.format(full_task))
+
+        print('saving params')
+        params_filename = save_params(task['params'])
+        print('...saved to {}'.format(params_filename))
+
+        call_cwl(full_task, params_filename)
+
+    print('done processing')
+
 
 
 if __name__ == '__main__':
