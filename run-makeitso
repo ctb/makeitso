@@ -1,0 +1,3 @@
+#! /usr/bin/env python
+import makeitso.__main__
+makeitso.__main__.main()
