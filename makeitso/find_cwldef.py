@@ -14,6 +14,9 @@ def find_cwldef(taskname):
         branch = 'master'
         if ':' in path:
             path, branch = path.rsplit(':', 1)
+        elif path is '':
+            if ':' in repo:
+                repo, branch = repo.rsplit(':', 1)
 
         if path == '':
             path = 'Dockstore.cwl'        # hack
