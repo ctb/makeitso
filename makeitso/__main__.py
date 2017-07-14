@@ -114,6 +114,7 @@ def worker(args):
         if not task:
             if args.quit:
                 print('no more tasks and --quit set; exiting')
+                break
             else:
                 sleep_n += 1
                 print('\rno more tasks; sleeping for a bit. {}'.format(sleep_n), end='')
