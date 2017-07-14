@@ -1,11 +1,9 @@
 #! /usr/bin/env python
 import argparse
-import requests
-import os.path
-from .logging import *
-import subprocess
 
-path_to_cwltool = 'cwl-runner'
+from .logging import *
+from .find_cwldef import find_cwldef
+from .call_cwl import call_cwl
 
 
 def main():
@@ -42,32 +40,12 @@ def run(args):
     p.add_argument('params_yaml')
     args = p.parse_args(args)
 
-    if args.taskname.startswith('http'):
-        url = args.taskname
-    else:
-        # try repo/path:tag
-        user, path = args.taskname.split('/', 1)
+    task = find_cwldef(args.taskname)
 
-        if '/' in path:
-            repo, path = path.split('/', 1)
-        else:
-            repo = path
-            path = ''
-
-        branch = 'master'
-        if ':' in path:
-            path, branch = path.rsplit(':', 1)
-
-        if path == '':
-            path = 'Dockstore.cwl'        # hack
-
-        github_url = 'https://raw.githubusercontent.com/{}/{}/{}/{}'
-        url = github_url.format(user, repo, branch, path)
-
-    notify('task: {}'.format(url))
+    notify('task: {}'.format(task))
     notify('params: {}'.format(args.params_yaml))
 
-    subprocess.call([path_to_cwltool, url, args.params_yaml])
+    call_cwl(task, args.params_yaml)
 
 
 if __name__ == '__main__':
