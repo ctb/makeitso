@@ -63,9 +63,10 @@ def run(args):
 def server(args):
     p = argparse.ArgumentParser()
     p.add_argument('-p', '--port', type=int, default=5000)
+    p.add_argument('--host', default='0.0.0.0')
     args = p.parse_args(args)
 
-    app.run(debug=True, port=args.port)
+    app.run(debug=True, port=args.port, host=args.host)
 
 
 def sendtask(args):
