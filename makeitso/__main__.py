@@ -10,6 +10,7 @@ from .logging import notify, set_quiet
 from .find_cwldef import find_cwldef
 from .call_cwl import call_cwl, save_params
 from .server import app
+from . import config
 
 
 def main():
@@ -68,10 +69,12 @@ def server(args):
 
 def sendtask(args):
     p = argparse.ArgumentParser()
-    p.add_argument('-S', '--server-url', default='http://localhost:5000')
+    p.add_argument('-S', '--server-url', default=config.default_server_url)
     p.add_argument('taskname')
     p.add_argument('params')
     args = p.parse_args(args)
+
+    notify('using server URL: {}'.format(args.server_url))
 
     full_url = args.server_url + '/todo/api/v1.0/tasks'
 
@@ -88,10 +91,12 @@ def sendtask(args):
 
 def worker(args):
     p = argparse.ArgumentParser()
-    p.add_argument('-S', '--server-url', default='http://localhost:5000')
+    p.add_argument('-S', '--server-url', default=config.default_server_url)
     p.add_argument('--quit', action='store_true')
     p.add_argument('--sleep-time', default=1)
     args = p.parse_args(args)
+
+    notify('using server URL: {}'.format(args.server_url))
 
     full_url = args.server_url + '/todo/api/v1.0/take_task'
 
@@ -111,7 +116,11 @@ def worker(args):
             else:
                 sleep_n += 1
                 print('\rno more tasks; sleeping for a bit. {}'.format(sleep_n), end='')
-                time.sleep(args.sleep_time)
+                try:
+                    time.sleep(args.sleep_time)
+                except KeyboardInterrupt:
+                    print('')
+                    break
                 continue
 
         print(task['uri'], task['taskname'])

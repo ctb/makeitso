@@ -1,0 +1,5 @@
+path_to_cwltool = 'cwl-runner'
+default_server_url = 'http://localhost:5001'
+
+# can also set
+#   process_call = ['/bin/echo'] or whatever

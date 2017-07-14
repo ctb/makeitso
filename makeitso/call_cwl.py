@@ -1,7 +1,7 @@
 import subprocess
 import tempfile
 
-path_to_cwltool = 'cwl-runner'
+from . import config
 
 
 def save_params(params_str):
@@ -13,5 +13,8 @@ def save_params(params_str):
 
 
 def call_cwl(task, params):
-    print('*** here I run: {} {} {}'.format(path_to_cwltool, task, params))
-    #subprocess.call(['/home/tx160085/env/bin/python', path_to_cwltool, task, params])
+    print('*** attempting to run {} {}'.format(task, params))
+
+    call_list = list(config.process_call)
+    call_list += [task, params]
+    subprocess.call(call_list)
