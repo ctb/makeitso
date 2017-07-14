@@ -21,13 +21,6 @@ def unauthorized():
 app = Flask('makeitso')
 
 tasks = [
-    {
-        'id': 1,
-        'taskname': u'ctb/dockstore-tool-bamstats',
-        'params': u'',
-        'done': False,
-        'taken': False,
-    },
 ]
 
 
