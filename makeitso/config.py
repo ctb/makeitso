@@ -13,4 +13,5 @@ try:
         process_call = makeitso_local_config.process_call
 
 except ImportError:
-    notify('no local config file (makeitso_local_config cannot be imported)')
+    #notify('no local config file (makeitso_local_config cannot be imported)')
+    pass
